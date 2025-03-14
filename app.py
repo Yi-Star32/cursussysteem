@@ -15,8 +15,10 @@ db.init_app(app)
 def home():
     if request.method == "POST":
         gebruikersnaam = request.form["gebruikersnaam"]
+        email = request.form["email"]
+        wachtwoord = request.form["wachtwoord"]
         if gebruikersnaam:
-            new_klant = Klant(gebruikersnaam=gebruikersnaam, email="testmail.com", wachtwoord="123ww")
+            new_klant = Klant(gebruikersnaam=gebruikersnaam, email=email, wachtwoord=wachtwoord)
             db.session.add(new_klant)
             db.session.commit()
         return f"Hello, {gebruikersnaam}!"

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-from db.models import db, User
+from sqlalchemy import text
+from db.models import db, Klant, Docent, Taal, Les
 
 app = Flask(__name__)
 
@@ -24,7 +25,7 @@ def about():
 
 
 if __name__ == '__main__':
-    with app.app_context():
+    with app.app_context():    
         db.create_all()
     app.run(debug=True)
 

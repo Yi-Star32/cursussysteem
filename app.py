@@ -11,7 +11,7 @@ db.init_app(app)
 # def index():
 #     return "Database is connected!"
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/account_aanmaken", methods=["GET", "POST"])
 def home():
     if request.method == "POST":
         gebruikersnaam = request.form["gebruikersnaam"]
@@ -23,6 +23,17 @@ def home():
             db.session.commit()
         return f"Hello, {gebruikersnaam}!"
     return render_template("form.html")
+
+@app.route("/taal_toevoegen", methods=["GET", "POST"])
+def taal_toevoegen():
+    if request.method == "POST":
+        taal = request.form["taal"]
+        if taal:
+            new_taal = Taal(taal=taal)
+            db.session.add(new_taal)
+            db.session.commit()
+        return f"Mooie, {taal}!"
+    return render_template("admin_form.html")
 
 
 @app.route("/about")

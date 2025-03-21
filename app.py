@@ -18,7 +18,7 @@ def home():
         email = request.form["email"]
         wachtwoord = request.form["wachtwoord"]
         if gebruikersnaam:
-            new_klant = Klant(gebruikersnaam=gebruikersnaam, email=email, wachtwoord=wachtwoord)
+            new_klant = Docent(gebruikersnaam=gebruikersnaam, email=email, wachtwoord=wachtwoord)
             db.session.add(new_klant)
             db.session.commit()
         return f"Hello, {gebruikersnaam}!"

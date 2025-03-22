@@ -10,6 +10,13 @@ db.init_app(app)
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/cursus_overzicht", methods=["GET"])
+def cursus_overzicht():
+    # if request.method 
+    talen = db.session.query(Taal.taal).all()  # Haal alleen de "name" kolom op
+    talen = [name[0] for name in talen]  # Omdat query.all() een lijst van tuples retourneert
+    return render_template("cursus_overzicht.html", talen=talen)
     
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
 def cursus_toevoegen():

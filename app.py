@@ -7,9 +7,10 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 db.init_app(app)
 
-# @app.route("/")
-# def index():
-#     return "Database is connected!"
+@app.route("/")
+def index():
+    return render_template("index.html")
+    
 
 @app.route("/account_aanmaken", methods=["GET", "POST"])
 def home():

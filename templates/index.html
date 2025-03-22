@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Flask Page</title>
-</head>
-<body>
-    <h1>Welcome to Flask!</h1>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Home{%endblock%}
+
+{%block content%}
+    <h2>Home Pagina</h2>
+    <p>This is your home page</p>
+{%endblock%}

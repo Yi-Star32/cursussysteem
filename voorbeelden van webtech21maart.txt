@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}De titel{% endblock %}</title>
+    </head>
+
+    <body>
+        <p>Navigatie</p>
+	<ul>
+	{% for message in get_flashed_messages()%}
+	<li>{{messages}}</li>
+	{% endfor %}
+	</ul>
+        {% block content %}
+        <h1>De pagina</h1>
+        <p>footer</p>
+        {% endblock %}
+    </body>
+</html>
+
+
+
+app.py
+
+
+
+from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, EmailField, TextAreaField
+from wtforms.validators import DataRequired, Email
+
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mijngeheimesleutel'
+
+class ContactForm(FlaskForm):
+    naam = StringField("Jouw naam", validators=[DataRequired()])
+    email = EmailField("Emailadres")
+    opmerkingen = TextAreaField("Opmerkingen")
+    submit = SubmitField("Versturen")
+
+@app.route("/")
+def index():
+    data = ["drum", "gitaar", "piano", "fluit"]
+    # render de template Basic.html
+    # return "<h1>Welkom bij muziekschool Session</h1>"
+    return render_template("basic.html", name="Norman", instruments=data)
+
+@app.route("/informatie")   #127.0.0.1:5000/informatie
+def info():
+    return "<h1>Dit hebben we jou te bieden, mofo:</h1>"
+
+#opsomming
+@app.route("/bungalows", methods=["GET"])
+def listing():
+    ...
+
+@app.route("/bungalows", methods=["POST"])
+def create():
+    ...
+        
+@app.route("/bungalows/<id>", methods=["GET"])        
+def read(id):
+    ...
+
+@app.route("/bungalows/<id>/edit", methods=["GET", "POST"])
+def update(id):
+    ...
+
+@app.route("/bungalows/<id>", methods=["GET"])
+def delete(id):
+    ...
+
+# @app.route("/cursist/<naam>")
+# def delete(naam):
+#     ...
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    print(request.method)
+    if request.form["email"] == ...
+
+    return render_template("contact.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+
+
+contact.html
+
+{% extends "base.html" %}
+
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+        <form method="POST" action="/contact">
+            {{ form.hidden_tag() }}
+            <label for="naam">Naam</label>
+            <input id="naam" name="naam" placeholder="Jouw naam">
+
+            <br>
+            
+            <label for="email">Email</label>
+            <input id="email" name="email" placeholder="Emailadres" type="email">
+
+            </br>
+            
+            <label for="opmerkingen">Opmerkingen</label>
+            <textarea id="opmerkingen" name="opmerkingen" id=""></textarea>
+
+            <br>
+            <input type="submit" name="submit" value="Versturen">
+        </form>
+{% endblock %}
+
+
+
+
+test request bestand:
+
+
+import requests
+
+data= {
+    "naam": "Bob de faker",
+    "email": "Giggity",
+    "opmerkingen": "Bruh!",
+    "nep_veld": "haha nope"
+    "csrf_token" = "?"
+}
+
+requests.post("http://127.0.0.1:5000/contact", data=data)
+
+
+
+return redirect("/")
+
+
+
+
+

@@ -17,6 +17,19 @@ def cursus_overzicht():
     talen = db.session.query(Taal.taal).all()  # Haal alleen de "name" kolom op
     talen = [name[0] for name in talen]  # Omdat query.all() een lijst van tuples retourneert
     return render_template("cursus_overzicht.html", talen=talen)
+
+@app.route("/les_maken", methods=["GET", "POST"])
+def les_maken():
+    # if request.method 
+    talen = db.session.query(Taal.taal).all() 
+    talen = [name[0] for name in talen]  # Omdat query.all() een lijst van tuples retourneert
+    # docenten = db.session.query(Docent.id, Docent.gebruikersnaam).all()
+    docent_ids = db.session.query(Docent.id).all()
+    docent_ids = [id[0] for id in docent_ids]
+    docent_namen = db.session.query(Docent.gebruikersnaam).all()
+    docent_namen = [naam[0] for naam in docent_namen]
+    # print(docent_namen)
+    return render_template("les_maken.html", talen=talen, docent_ids=docent_ids, docent_namen=docent_namen)
     
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
 def cursus_toevoegen():

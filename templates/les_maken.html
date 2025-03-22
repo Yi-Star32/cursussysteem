@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Lessen{%endblock%}
+
+{%block content%}
+    <h2>Les Pagina</h2>
+    <p>This is your lesson page</p>
+    <ul>
+        {% for taal in talen %}
+            <li>{{ taal }}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for docent_id in docent_ids %}
+            <li>{{ docent_id }}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for docent_naam in docent_namen %}
+            <li>{{ docent_naam }}</li>
+        {% endfor %}
+    </ul>
+
+{%endblock%}

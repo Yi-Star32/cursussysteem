@@ -20,6 +20,12 @@ def cursus_overzicht():
 
 @app.route("/les_maken", methods=["GET", "POST"])
 def les_maken():
+    tijdstippen = [f"{h:02d}:00" for h in range(8, 18)]  # Lijst met tijden van 08:00 tot 17:00
+
+    geselecteerde_tijd = None
+    if request.method == "POST":
+        geselecteerde_tijd = request.form.get("tijdstip")  # Haal de gekozen tijd op
+
     # if request.method 
     talen = db.session.query(Taal.taal).all() 
     talen = [name[0] for name in talen]  # Omdat query.all() een lijst van tuples retourneert
@@ -28,8 +34,17 @@ def les_maken():
     docent_ids = [id[0] for id in docent_ids]
     docent_namen = db.session.query(Docent.gebruikersnaam).all()
     docent_namen = [naam[0] for naam in docent_namen]
+    locaties = db.session.query(Locatie.locatie).all()
+    locaties = [locatie[0] for locatie in locaties]
+    klant_ids = db.session.query(Klant.id).all()
+    klant_ids = [id[0] for id in klant_ids]
+    klant_namen = db.session.query(Klant.gebruikersnaam).all()
+    klant_namen = [naam[0] for naam in klant_namen]
     # print(docent_namen)
-    return render_template("les_maken.html", talen=talen, docent_ids=docent_ids, docent_namen=docent_namen)
+    return render_template("les_maken.html", talen=talen, docent_ids=docent_ids, 
+                           docent_namen=docent_namen, locaties=locaties, klant_ids=klant_ids, 
+                           klant_namen=klant_namen, tijdstippen=tijdstippen, 
+                           geselecteerde_tijd=geselecteerde_tijd)
     
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
 def cursus_toevoegen():

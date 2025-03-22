@@ -11,6 +11,16 @@ db.init_app(app)
 def index():
     return render_template("index.html")
     
+@app.route("/cursus_toevoegen", methods=["GET", "POST"])
+def cursus_toevoegen():
+    if request.method == "POST":
+        cursusnaam = request.form["cursusnaam"]
+        if cursusnaam:
+            new_cursus = Taal(taal=cursusnaam)
+            db.session.add(new_cursus)
+            db.session.commit()
+        return f"Cursus toegevoegd: {cursusnaam}!"
+    return render_template("cursus_toevoegen.html")
 
 @app.route("/account_aanmaken", methods=["GET", "POST"])
 def home():

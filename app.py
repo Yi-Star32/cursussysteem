@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from sqlalchemy import text
-from db.models import db, Klant, Docent, Taal, Les
+from db.models import db, Klant, Docent, Taal, Les, Locatie
 
 app = Flask(__name__)
 
@@ -41,6 +41,17 @@ def cursus_toevoegen():
             db.session.commit()
         return f"Cursus toegevoegd: {cursusnaam}!"
     return render_template("cursus_toevoegen.html")
+
+@app.route("/locaties", methods=["GET", "POST"])
+def locaties():
+    if request.method == "POST":
+        locatie = request.form["locatie"]
+        if locatie:
+            new_locatie = Locatie(locatie=locatie)
+            db.session.add(new_locatie)
+            db.session.commit()
+        return f"Locatie toegevoegd: {locatie}!"
+    return render_template("locaties.html")
 
 @app.route("/account_aanmaken", methods=["GET", "POST"])
 def home():

@@ -27,6 +27,14 @@ class Taal(db.Model):
 
     def __repr__(self):
         return f"<Taal {self.id} - {self.taal}>"
+
+class Locatie(db.Model):
+    id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
+    locatie = db.Column(db.String(20), nullable=False)
+
+
+    def __repr__(self):
+        return f"<Locatie {self.id} - {self.locatie}>"
     
 
 class Les(db.Model):

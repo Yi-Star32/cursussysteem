@@ -23,8 +23,8 @@ def les_maken():
     tijdstippen = [f"{h:02d}:00" for h in range(8, 18)]  # Lijst met tijden van 08:00 tot 17:00
 
     geselecteerde_tijd = None
-    if request.method == "POST":
-        geselecteerde_tijd = request.form.get("tijdstip")  # Haal de gekozen tijd op
+    
+    geselecteerde_tijd = request.form.get("tijdstip")  # Haal de gekozen tijd op
 
     # if request.method 
     talen = db.session.query(Taal.taal).all() 
@@ -40,6 +40,16 @@ def les_maken():
     klant_ids = [id[0] for id in klant_ids]
     klant_namen = db.session.query(Klant.gebruikersnaam).all()
     klant_namen = [naam[0] for naam in klant_namen]
+
+    if request.method == "POST":
+        les_properties = ["klant", "docent_naam", "taal", "tijdstip", "locatie"]
+        les = [request.form[x] for x in les_properties]
+        print(les)
+        if les:
+            new_cursus = Les(id_klant=les[0], id_docent=les[1], id_taal=les[2], start_tijd=les[3], locatie=les[4])#list comp
+            db.session.add(new_cursus)
+            db.session.commit()
+
     # print(docent_namen)
     return render_template("les_maken.html", talen=talen, docent_ids=docent_ids, 
                            docent_namen=docent_namen, locaties=locaties, klant_ids=klant_ids, 

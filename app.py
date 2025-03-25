@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from sqlalchemy import text
-from db.models import db, Klant, Docent, Taal, Les, Locatie
+from db.models import db, Klant, Docent, Cursus, Les, Locatie
 
 app = Flask(__name__)
 
@@ -14,9 +14,9 @@ def index():
 @app.route("/cursus_overzicht", methods=["GET"])
 def cursus_overzicht():
     # if request.method 
-    talen = db.session.query(Taal.taal).all()  # Haal alleen de "name" kolom op
-    talen = [name[0] for name in talen]  # Omdat query.all() een lijst van tuples retourneert
-    return render_template("cursus_overzicht.html", talen=talen)
+    cursussen = db.session.query(Cursus.cursus).all()  # Haal alleen de "name" kolom op
+    cursussen = [name[0] for name in cursussen]  # Omdat query.all() een lijst van tuples retourneert
+    return render_template("cursus_overzicht.html", cursussen=cursussen)
 
 @app.route("/les_maken", methods=["GET", "POST"])
 def les_maken():
@@ -27,8 +27,8 @@ def les_maken():
     geselecteerde_tijd = request.form.get("tijdstip")  # Haal de gekozen tijd op
 
     # if request.method 
-    talen = db.session.query(Taal.taal).all() 
-    talen = [name[0] for name in talen]  # Omdat query.all() een lijst van tuples retourneert
+    cursussen = db.session.query(Cursus.cursus).all() 
+    cursussen = [name[0] for name in cursussen]  # Omdat query.all() een lijst van tuples retourneert
     # docenten = db.session.query(Docent.id, Docent.gebruikersnaam).all()
     docent_ids = db.session.query(Docent.id).all()
     docent_ids = [id[0] for id in docent_ids]
@@ -42,16 +42,16 @@ def les_maken():
     klant_namen = [naam[0] for naam in klant_namen]
 
     if request.method == "POST":
-        les_properties = ["klant", "docent_naam", "taal", "tijdstip", "locatie"]
+        les_properties = ["klant", "docent_naam", "cursus", "tijdstip", "locatie"]
         les = [request.form[x] for x in les_properties]
         print(les)
         if les:
-            new_cursus = Les(id_klant=les[0], id_docent=les[1], id_taal=les[2], start_tijd=les[3], locatie=les[4])#list comp
-            db.session.add(new_cursus)
+            new_les = Les(id_klant=les[0], id_docent=les[1], id_cursus=les[2], start_tijd=les[3], locatie=les[4])#list comp
+            db.session.add(new_les)
             db.session.commit()
 
     # print(docent_namen)
-    return render_template("les_maken.html", talen=talen, docent_ids=docent_ids, 
+    return render_template("les_maken.html", cursussen=cursussen, docent_ids=docent_ids, 
                            docent_namen=docent_namen, locaties=locaties, klant_ids=klant_ids, 
                            klant_namen=klant_namen, tijdstippen=tijdstippen, 
                            geselecteerde_tijd=geselecteerde_tijd)
@@ -61,11 +61,22 @@ def cursus_toevoegen():
     if request.method == "POST":
         cursusnaam = request.form["cursusnaam"]
         if cursusnaam:
-            new_cursus = Taal(taal=cursusnaam)
+            new_cursus = Cursus(cursus=cursusnaam)
             db.session.add(new_cursus)
             db.session.commit()
         return f"Cursus toegevoegd: {cursusnaam}!"
     return render_template("cursus_toevoegen.html")
+
+# @app.route("/cursus_toevoegen", methods=["GET", "POST"])
+# def cursus_toevoegen():
+#     if request.method == "POST":
+#         cursus = request.form["cursus"]
+#         if cursus:
+#             new_cursus = cursus(cursus=cursus)
+#             db.session.add(new_cursus)
+#             db.session.commit()
+#         return f"Mooie, {cursus}!"
+#     return render_template("admin_form.html")
 
 @app.route("/locaties", methods=["GET", "POST"])
 def locaties():
@@ -91,22 +102,10 @@ def home():
         return f"Hello, {gebruikersnaam}!"
     return render_template("form.html")
 
-@app.route("/taal_toevoegen", methods=["GET", "POST"])
-def taal_toevoegen():
-    if request.method == "POST":
-        taal = request.form["taal"]
-        if taal:
-            new_taal = Taal(taal=taal)
-            db.session.add(new_taal)
-            db.session.commit()
-        return f"Mooie, {taal}!"
-    return render_template("admin_form.html")
-
 
 @app.route("/about")
 def about():
     return "This is the about page!"
-
 
 
 if __name__ == '__main__':

@@ -20,13 +20,13 @@ class Docent(Gebruiker):
     pass
 
 
-class Taal(db.Model):
+class Cursus(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
-    taal = db.Column(db.String(20), nullable=False)
+    cursus = db.Column(db.String(20), nullable=False)
 
 
     def __repr__(self):
-        return f"<Taal {self.id} - {self.taal}>"
+        return f"<Cursus {self.id} - {self.cursus}>"
 
 class Locatie(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
@@ -41,9 +41,10 @@ class Les(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_klant = db.Column(db.Integer, nullable=False) 
     id_docent = db.Column(db.Integer, nullable=False) 
-    id_taal = db.Column(db.Integer, nullable=False) 
+    id_cursus = db.Column(db.Integer, nullable=False) 
     start_tijd = db.Column(db.String(12), nullable=False)
     locatie = db.Column(db.String(50), nullable=False)  
 
     def __repr__(self):
-        return f"<Les {self.id} - {self.id_taal} - {self.start_tijd}>"
+        return f"<Les {self.id} - {self.cursus} - {self.start_tijd}>"
+    

@@ -6,10 +6,10 @@
     <h2>Les Pagina</h2>
     <p>This is your lesson page</p>
     <form method="post">
-        <select name="taal" required>
-            <option value="" disabled selected>Selecteer een taal...</option> 
-            {% for taal in talen %}
-                <option value="{{ taal }}">{{ taal }}</option>
+        <select name="cursus" required>
+            <option value="" disabled selected>Selecteer een cursus...</option> 
+            {% for cursus in cursussen %}
+                <option value="{{ cursus }}">{{ cursus }}</option>
             {% endfor %}
         </select>
         <select name="docent_naam" required>

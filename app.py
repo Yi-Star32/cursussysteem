@@ -1,6 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import text
 from db.models import db, Klant, Docent, Cursus, Les, Locatie
+from flask_login import login_user, login_required, logout_user
+from utils.forms import LoginForm, RegistrationForm
+
+
+
 
 app = Flask(__name__)
 
@@ -10,6 +15,51 @@ db.init_app(app)
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # Grab the user from our User Models table
+        user = User.query.filter_by(email=form.email.data).first()
+
+        # Check that the user was supplied and the password is right
+        # The verify_password method comes from the User object
+        # https://stackoverflow.com/questions/2209755/python-operation-vs-is-not
+
+        if user.check_password(form.password.data) and user is not None:
+            # Log in the user
+
+            login_user(user)
+            flash('Logged in successfully.')
+
+            # If a user was trying to visit a page that requires a login
+            # flask saves that URL as 'next'.
+            next = request.args.get('next')
+
+            # So let's now check if that next exists, otherwise we'll go to
+            # the welcome page.
+            if next == None or not next[0] == '/':
+                next = url_for('welkom')
+
+            return redirect(next)
+    return render_template('login.html', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        user = User(email=form.email.data,
+                    username=form.username.data,
+                    password=form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+        flash('Dank voor de registratie. Er kan nu ingelogd worden! ')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
 
 @app.route("/cursus_overzicht", methods=["GET"])
 def cursus_overzicht():

@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Form</title>
-</head>
-<body>
-    <form method="post">
-        <input type="text" name="gebruikersnaam" placeholder="Enter your name">
-        <input type="text" name="email" placeholder="Enter your e-mail">
-        <input type="text" name="wachtwoord" placeholder="Enter your password">
-        <button type="submit">Submit</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post">
+    <input type="text" name="gebruikersnaam" placeholder="Enter your name">
+    <input type="text" name="email" placeholder="Enter your e-mail">
+    <input type="text" name="wachtwoord" placeholder="Enter your password">
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

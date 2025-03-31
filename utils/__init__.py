@@ -10,7 +10,8 @@ login_manager = LoginManager()
 app = Flask(__name__)
 
 # Vaak worden deze coderegels in een apart config.py-bestand ondergebracht
-app.config['SECRET_KEY'] = 'mijngeheimesleutel'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secret_key')
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

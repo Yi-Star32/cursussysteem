@@ -1,4 +1,14 @@
-{% extends "base.html" %} {% block content %}
+<!-- <form method="post">
+    <input type="text" name="gebruikersnaam" placeholder="Enter your name">
+    <input type="text" name="email" placeholder="Enter your e-mail">
+    <input type="text" name="wachtwoord" placeholder="Enter your password">
+    <input type="text" name="pass_confirm" placeholder="Re-enter your password">
+    <button type="submit">Submit</button>
+</form> -->
+
+{% extends "base.html" %} 
+
+{% block content %}
 {{ form.hidden_tag() }} {{ form.email.label }} {{ form.email() }}
 {{ form.username.label }} {{ form.username() }}
 {{ form.password.label }} {{ form.password() }}

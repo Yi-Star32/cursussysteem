@@ -1,16 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import text
-from db.models import db, Klant, Docent, Cursus, Les, Locatie
+from db.models import db, Klant, Docent, Cursus, Les, Locatie, LoginForm, RegistrationForm, User
 from flask_login import login_user, login_required, logout_user
-from utils.forms import LoginForm, RegistrationForm
+import os
 
 
 
 
 app = Flask(__name__)
 
+
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secret_key')
+
 db.init_app(app)
+
 
 @app.route("/")
 def index():
@@ -51,6 +56,7 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
+        print("klik submit")
         user = User(email=form.email.data,
                     username=form.username.data,
                     password=form.password.data)
@@ -156,6 +162,8 @@ def home():
 @app.route("/about")
 def about():
     return "This is the about page!"
+
+
 
 
 if __name__ == '__main__':

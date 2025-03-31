@@ -55,17 +55,22 @@ def login():
 def register():
     form = RegistrationForm()
 
-    if form.validate_on_submit():
-        print("klik submit")
-        user = User(email=form.email.data,
-                    username=form.username.data,
-                    password=form.password.data)
+    # Controleer of het formulier correct is ingediend
+    if form.validate_on_submit():  # Dit zorgt voor validatie
+        user = User(
+            email=form.email.data,
+            username=form.username.data,
+            password=form.password.data  # Je zou hier een versleutelde versie van het wachtwoord moeten opslaan
+        )
 
         db.session.add(user)
         db.session.commit()
-        flash('Dank voor de registratie. Er kan nu ingelogd worden! ')
+        flash('Dank voor de registratie. Je kunt nu inloggen! ')
         return redirect(url_for('login'))
+
+    # Als het formulier niet is ingediend of niet geldig is, render dan het formulier opnieuw
     return render_template('account/register.html', form=form)
+
 
 @app.route("/cursus_overzicht", methods=["GET"])
 def cursus_overzicht():

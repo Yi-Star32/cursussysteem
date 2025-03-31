@@ -48,7 +48,7 @@ def login():
                 next = url_for('welkom')
 
             return redirect(next)
-    return render_template('login.html', form=form)
+    return render_template('account/login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -65,14 +65,14 @@ def register():
         db.session.commit()
         flash('Dank voor de registratie. Er kan nu ingelogd worden! ')
         return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+    return render_template('account/register.html', form=form)
 
 @app.route("/cursus_overzicht", methods=["GET"])
 def cursus_overzicht():
     # if request.method 
     cursussen = db.session.query(Cursus.cursus).all()  # Haal alleen de "name" kolom op
     cursussen = [name[0] for name in cursussen]  # Omdat query.all() een lijst van tuples retourneert
-    return render_template("cursus_overzicht.html", cursussen=cursussen)
+    return render_template("account/cursus_overzicht.html", cursussen=cursussen)
 
 @app.route("/les_maken", methods=["GET", "POST"])
 def les_maken():
@@ -107,7 +107,7 @@ def les_maken():
             db.session.commit()
 
     # print(docent_namen)
-    return render_template("les_maken.html", cursussen=cursussen, docent_ids=docent_ids, 
+    return render_template("admin/les_maken.html", cursussen=cursussen, docent_ids=docent_ids, 
                            docent_namen=docent_namen, locaties=locaties, klant_ids=klant_ids, 
                            klant_namen=klant_namen, tijdstippen=tijdstippen, 
                            geselecteerde_tijd=geselecteerde_tijd)
@@ -121,18 +121,8 @@ def cursus_toevoegen():
             db.session.add(new_cursus)
             db.session.commit()
         return f"Cursus toegevoegd: {cursusnaam}!"
-    return render_template("cursus_toevoegen.html")
+    return render_template("admin/cursus_toevoegen.html")
 
-# @app.route("/cursus_toevoegen", methods=["GET", "POST"])
-# def cursus_toevoegen():
-#     if request.method == "POST":
-#         cursus = request.form["cursus"]
-#         if cursus:
-#             new_cursus = cursus(cursus=cursus)
-#             db.session.add(new_cursus)
-#             db.session.commit()
-#         return f"Mooie, {cursus}!"
-#     return render_template("admin_form.html")
 
 @app.route("/locaties", methods=["GET", "POST"])
 def locaties():
@@ -143,7 +133,7 @@ def locaties():
             db.session.add(new_locatie)
             db.session.commit()
         return f"Locatie toegevoegd: {locatie}!"
-    return render_template("locaties.html")
+    return render_template("admin/locaties.html")
 
 @app.route("/account_aanmaken", methods=["GET", "POST"])
 def home():
@@ -156,7 +146,7 @@ def home():
             db.session.add(new_klant)
             db.session.commit()
         return f"Hello, {gebruikersnaam}!"
-    return render_template("form.html")
+    return render_template("account/form.html")
 
 
 @app.route("/about")

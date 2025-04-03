@@ -1,4 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
+from . import db
+from flask_login import UserMixin
+from sqlalchemy.sql import func
 
 from utils import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,17 +13,17 @@ from flask_wtf import FlaskForm
 
 db = SQLAlchemy()
 
-class RegistrationForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(),Email()])
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired(), EqualTo('pass_confirm', message='Passwords Must Match!')])
-    pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
-    submit = SubmitField('Submit!')
+# class RegistrationForm(FlaskForm):
+#     email = StringField('Email', validators=[DataRequired(),Email()])
+#     username = StringField('Username', validators=[DataRequired()])
+#     password = PasswordField('Password', validators=[DataRequired(), EqualTo('pass_confirm', message='Passwords Must Match!')])
+#     pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
+#     submit = SubmitField('Submit!')
 
-class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Inloggen')
+# class LoginForm(FlaskForm):
+#     email = StringField('Email', validators=[DataRequired(), Email()])
+#     password = PasswordField('Password', validators=[DataRequired()])
+#     submit = SubmitField('Inloggen')
 
 class User(db.Model, UserMixin):
     # Maak een tabel aan in de database

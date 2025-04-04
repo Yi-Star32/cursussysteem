@@ -23,7 +23,7 @@ def login():
 def register():
 
     # Als het formulier niet is ingediend of niet geldig is, render dan het formulier opnieuw
-    return render_template('account/register.html')
+    return render_template('account/register.html', user=current_user)
 
 
 @views.route("/cursus_overzicht", methods=["GET"])

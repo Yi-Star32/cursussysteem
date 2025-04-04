@@ -3,7 +3,7 @@ from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 
-from utils import db, login_manager
+# from utils import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
@@ -11,7 +11,7 @@ from wtforms import StringField, TextAreaField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from flask_wtf import FlaskForm
 
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 # class RegistrationForm(FlaskForm):
 #     email = StringField('Email', validators=[DataRequired(),Email()])

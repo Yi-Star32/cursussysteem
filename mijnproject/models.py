@@ -1,26 +1,14 @@
-from flask_sqlalchemy import SQLAlchemy
-
-from utils import db, login_manager
+from mijnproject import db, login_manager, app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-from wtforms import StringField, TextAreaField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
-from flask_wtf import FlaskForm
 
-db = SQLAlchemy()
+# De user_loader decorator zorgt voor de flask-login voor de huidige gebruiker
+# en haalt zijn/haar id op.
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
-class RegistrationForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(),Email()])
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired(), EqualTo('pass_confirm', message='Passwords Must Match!')])
-    pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
-    submit = SubmitField('Submit!')
-
-class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Inloggen')
 
 class User(db.Model, UserMixin):
     # Maak een tabel aan in de database
@@ -39,9 +27,6 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
-
-    
-
 class Gebruiker(db.Model):
     __abstract__ = True  # Zorgt ervoor dat deze klasse geen eigen tabel krijgt
     id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
@@ -53,13 +38,15 @@ class Gebruiker(db.Model):
         return f"<{self.__class__.__name__} {self.id} - {self.gebruikersnaam}>"
 
 class Klant(Gebruiker):
+    __tablename__ = 'Klant'
     pass
 
 class Docent(Gebruiker):
+    __tablename__ = 'docent'
     pass
 
-
 class Cursus(db.Model):
+    __tablename__ = 'cursus'
     id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
     cursus = db.Column(db.String(20), nullable=False)
 
@@ -68,6 +55,7 @@ class Cursus(db.Model):
         return f"<Cursus {self.id} - {self.cursus}>"
 
 class Locatie(db.Model):
+    __tablename__ = 'locatie'
     id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
     locatie = db.Column(db.String(20), nullable=False)
 
@@ -77,6 +65,7 @@ class Locatie(db.Model):
     
 
 class Les(db.Model):
+    __tablename__ = 'les'
     id = db.Column(db.Integer, primary_key=True)
     id_klant = db.Column(db.Integer, nullable=False) 
     id_docent = db.Column(db.Integer, nullable=False) 
@@ -86,4 +75,6 @@ class Les(db.Model):
 
     def __repr__(self):
         return f"<Les {self.id} - {self.cursus} - {self.start_tijd}>"
-    
+
+with app.app_context():
+    db.create_all()

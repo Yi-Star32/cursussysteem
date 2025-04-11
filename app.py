@@ -1,75 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from sqlalchemy import text
-from db.models import db, Klant, Docent, Cursus, Les, Locatie, LoginForm, RegistrationForm, User
-from flask_login import login_user, login_required, logout_user
-import os
+from mijnproject import app, db
+from mijnproject.models import Cursus, Les, Locatie, Klant, Docent
+from flask import render_template, redirect, request, url_for, flash
+from flask_login import login_user, login_required, logout_user, current_user
+from mijnproject.models import User
+from mijnproject.forms import LoginForm, RegistrationForm
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-
-
-app = Flask(__name__)
-
-
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secret_key')
-
-db.init_app(app)
-
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        # Grab the user from our User Models table
-        user = User.query.filter_by(email=form.email.data).first()
-
-        # Check that the user was supplied and the password is right
-        # The verify_password method comes from the User object
-        # https://stackoverflow.com/questions/2209755/python-operation-vs-is-not
-
-        if user.check_password(form.password.data) and user is not None:
-            # Log in the user
-
-            login_user(user)
-            flash('Logged in successfully.')
-
-            # If a user was trying to visit a page that requires a login
-            # flask saves that URL as 'next'.
-            next = request.args.get('next')
-
-            # So let's now check if that next exists, otherwise we'll go to
-            # the welcome page.
-            if next == None or not next[0] == '/':
-                next = url_for('welkom')
-
-            return redirect(next)
-    return render_template('account/login.html', form=form)
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
-
-    # Controleer of het formulier correct is ingediend
-    if form.validate_on_submit():  # Dit zorgt voor validatie
-        user = User(
-            email=form.email.data,
-            username=form.username.data,
-            password=form.password.data  # Je zou hier een versleutelde versie van het wachtwoord moeten opslaan
-        )
-
-        db.session.add(user)
-        db.session.commit()
-        flash('Dank voor de registratie. Je kunt nu inloggen! ')
-        return redirect(url_for('login'))
-
-    # Als het formulier niet is ingediend of niet geldig is, render dan het formulier opnieuw
-    return render_template('account/register.html', form=form)
 
 
 @app.route("/cursus_overzicht", methods=["GET"])
@@ -80,6 +17,7 @@ def cursus_overzicht():
     return render_template("account/cursus_overzicht.html", cursussen=cursussen)
 
 @app.route("/les_maken", methods=["GET", "POST"])
+@login_required
 def les_maken():
     tijdstippen = [f"{h:02d}:00" for h in range(8, 18)]  # Lijst met tijden van 08:00 tot 17:00
 
@@ -118,6 +56,7 @@ def les_maken():
                            geselecteerde_tijd=geselecteerde_tijd)
     
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
+@login_required
 def cursus_toevoegen():
     if request.method == "POST":
         cursusnaam = request.form["cursusnaam"]
@@ -130,6 +69,7 @@ def cursus_toevoegen():
 
 
 @app.route("/locaties", methods=["GET", "POST"])
+@login_required
 def locaties():
     if request.method == "POST":
         locatie = request.form["locatie"]
@@ -141,7 +81,7 @@ def locaties():
     return render_template("admin/locaties.html")
 
 @app.route("/account_aanmaken", methods=["GET", "POST"])
-def home():
+def account_aanmaken():
     if request.method == "POST":
         gebruikersnaam = request.form["gebruikersnaam"]
         email = request.form["email"]
@@ -160,10 +100,70 @@ def about():
 
 
 
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/welkom')
+@login_required
+def welkom():
+    return render_template('welkom.html')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Je bent nu uitgelogd!')
+    return redirect(url_for('home'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # Grab the user from our User Models table
+        user = User.query.filter_by(email=form.email.data).first()
+
+        # Check that the user was supplied and the password is right
+        # The verify_password method comes from the User object
+        # https://stackoverflow.com/questions/2209755/python-operation-vs-is-not
+
+        if user is not None and user.check_password(form.password.data):
+            # Log in the user
+
+            login_user(user)
+            flash('Logged in successfully.')
+
+            # If a user was trying to visit a page that requires a login
+            # flask saves that URL as 'next'.
+            next = request.args.get('next')
+
+            # So let's now check if that next exists, otherwise we'll go to
+            # the welcome page.
+            if next == None or not next[0] == '/':
+                next = url_for('welkom')
+
+            return redirect(next)
+    return render_template('login.html', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        user = User(email=form.email.data,
+                    username=form.username.data,
+                    password=form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+        flash('Dank voor de registratie. Er kan nu ingelogd worden! ')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
 
 if __name__ == '__main__':
-    with app.app_context():    
-        db.create_all()
     app.run(debug=True)
-
-

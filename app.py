@@ -38,15 +38,15 @@ def les_maken():
     cursussen = db.session.query(Cursus.cursus).all() 
     cursussen = [name[0] for name in cursussen]  # Omdat query.all() een lijst van tuples retourneert
     # docenten = db.session.query(Docent.id, Docent.gebruikersnaam).all()
-    docent_ids = db.session.query(Docent.id).all()
-    docent_ids = [id[0] for id in docent_ids]
-    docent_namen = db.session.query(Docent.gebruikersnaam).all()
+    docent_ids = db.session.query(User.id).filter_by(role='docent').all()
+    docent_ids = [id[0] for id in docent_ids]  # Converteer de lijst van tuples naar een lijst van IDs
+    docent_namen = db.session.query(User.username).filter_by(role='docent').all()
     docent_namen = [naam[0] for naam in docent_namen]
     locaties = db.session.query(Locatie.locatie).all()
     locaties = [locatie[0] for locatie in locaties]
-    klant_ids = db.session.query(Klant.id).all()
+    klant_ids = db.session.query(User.id).filter_by(role='klant').all()
     klant_ids = [id[0] for id in klant_ids]
-    klant_namen = db.session.query(Klant.gebruikersnaam).all()
+    klant_namen = db.session.query(User.username).filter_by(role='klant').all()
     klant_namen = [naam[0] for naam in klant_namen]
 
     if request.method == "POST":
@@ -58,6 +58,7 @@ def les_maken():
             db.session.add(new_les)
             db.session.commit()
 
+            flash(f"Les voor: {les[0]} aangemaakt!")
     # print(docent_namen)
     return render_template("admin/les_maken.html", cursussen=cursussen, docent_ids=docent_ids, 
                            docent_namen=docent_namen, locaties=locaties, klant_ids=klant_ids, 
@@ -76,7 +77,8 @@ def cursus_toevoegen():
             new_cursus = Cursus(cursus=cursusnaam)
             db.session.add(new_cursus)
             db.session.commit()
-        return f"Cursus toegevoegd: {cursusnaam}!"
+        flash(f"Cursus toegevoegd: {cursusnaam}!")
+        return redirect(url_for('home'))        
     return render_template("admin/cursus_toevoegen.html")
 
 
@@ -92,21 +94,9 @@ def locaties():
             new_locatie = Locatie(locatie=locatie)
             db.session.add(new_locatie)
             db.session.commit()
-        return f"Locatie toegevoegd: {locatie}!"
+        flash(f"Locatie toegevoegd: {locatie}!")
+        return redirect(url_for('home'))
     return render_template("admin/locaties.html")
-
-@app.route("/account_aanmaken", methods=["GET", "POST"])
-def account_aanmaken():
-    if request.method == "POST":
-        gebruikersnaam = request.form["gebruikersnaam"]
-        email = request.form["email"]
-        wachtwoord = request.form["wachtwoord"]
-        if gebruikersnaam:
-            new_klant = Docent(gebruikersnaam=gebruikersnaam, email=email, wachtwoord=wachtwoord)
-            db.session.add(new_klant)
-            db.session.commit()
-        return f"Hello, {gebruikersnaam}!"
-    return render_template("account/form.html")
 
 
 @app.route("/about")

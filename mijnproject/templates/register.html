@@ -6,6 +6,13 @@
     {{ form.username.label }} {{ form.username() }}<br>
     {{ form.password.label }} {{ form.password() }}<br>
     {{ form.pass_confirm.label }} {{ form.pass_confirm() }}<br>
+    
+    <!-- Checkbox for selecting role -->
+    <label for="is_docent">
+        <input type="checkbox" id="is_docent" name="is_docent" value="true">
+        Registreer als docent
+    </label><br>
+    
     {{ form.submit() }}
 </form>
 {% endblock %}

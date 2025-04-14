@@ -1,5 +1,5 @@
 from mijnproject import app, db
-from mijnproject.models import Cursus, Les, Locatie, Klant, Docent
+from mijnproject.models import Cursus, Les, Locatie, User
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from mijnproject.models import User
@@ -7,7 +7,13 @@ from mijnproject.forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-
+@app.route('/admin')
+@login_required
+def admin_dashboard():
+    if current_user.role != 'docent':
+        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        return redirect(url_for('home'))
+    return render_template('admin/dashboard.html')
 
 @app.route("/cursus_overzicht", methods=["GET"])
 def cursus_overzicht():
@@ -19,6 +25,9 @@ def cursus_overzicht():
 @app.route("/les_maken", methods=["GET", "POST"])
 @login_required
 def les_maken():
+    if current_user.role != 'docent':
+        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        return redirect(url_for('home'))
     tijdstippen = [f"{h:02d}:00" for h in range(8, 18)]  # Lijst met tijden van 08:00 tot 17:00
 
     geselecteerde_tijd = None
@@ -58,6 +67,9 @@ def les_maken():
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
 @login_required
 def cursus_toevoegen():
+    if current_user.role != 'docent':
+        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        return redirect(url_for('home'))
     if request.method == "POST":
         cursusnaam = request.form["cursusnaam"]
         if cursusnaam:
@@ -71,6 +83,9 @@ def cursus_toevoegen():
 @app.route("/locaties", methods=["GET", "POST"])
 @login_required
 def locaties():
+    if current_user.role != 'docent':
+        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        return redirect(url_for('home'))
     if request.method == "POST":
         locatie = request.form["locatie"]
         if locatie:
@@ -154,16 +169,19 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
+        is_docent = request.form.get('is_docent') == 'true'  # Controleer of de checkbox is aangevinkt
+        role = 'docent' if is_docent else 'klant'  # Stel de rol in op basis van de keuze
+
         user = User(email=form.email.data,
                     username=form.username.data,
-                    password=form.password.data)
+                    password=form.password.data,
+                    role=role)
 
         db.session.add(user)
         db.session.commit()
-        flash('Dank voor de registratie. Er kan nu ingelogd worden! ')
+        flash('Dank voor de registratie. Er kan nu ingelogd worden!')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

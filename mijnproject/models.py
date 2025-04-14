@@ -18,33 +18,17 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+    role = db.Column(db.String(10), nullable=False, default='klant')  # Nieuwe kolom voor rol
 
-    def __init__(self, email, username, password):
+    def __init__(self, email, username, password, role='klant'):
         self.email = email
         self.username = username
         self.password_hash = generate_password_hash(password)
+        self.role = role
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
-class Gebruiker(db.Model):
-    __abstract__ = True  # Zorgt ervoor dat deze klasse geen eigen tabel krijgt
-    id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
-    gebruikersnaam = db.Column(db.String(12), nullable=False)
-    email = db.Column(db.String(100), nullable=False)  
-    wachtwoord = db.Column(db.String(100), nullable=False)  # Vierde kolom
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} {self.id} - {self.gebruikersnaam}>"
-
-class Klant(Gebruiker):
-    __tablename__ = 'Klant'
-    pass
-
-class Docent(Gebruiker):
-    __tablename__ = 'docent'
-    pass
-
 class Cursus(db.Model):
     __tablename__ = 'cursus'
     id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID

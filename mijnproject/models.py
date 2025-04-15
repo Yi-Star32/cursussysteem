@@ -46,6 +46,16 @@ class Locatie(db.Model):
 
     def __repr__(self):
         return f"<Locatie {self.id} - {self.locatie}>"
+
+class Inschrijving(db.Model):
+    __tablename__ = 'inschrijving'
+    klant_id = db.Column(db.Integer, primary_key=True, nullable=False)  # Eerste kolom: Auto-increment ID
+    cursus_id = db.Column(db.Integer, primary_key=True, nullable=False)
+
+
+    def __repr__(self):
+        return f"<Inschrijving {self.klant_id} - {self.cursus_id}>"
+    
     
 
 class Les(db.Model):

@@ -1,5 +1,5 @@
 from mijnproject import app, db
-from mijnproject.models import Cursus, Les, Locatie, User
+from mijnproject.models import Cursus, Les, Locatie, User, Inschrijving
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from mijnproject.models import User
@@ -15,12 +15,35 @@ def admin_dashboard():
         return redirect(url_for('home'))
     return render_template('admin/dashboard.html')
 
-@app.route("/cursus_overzicht", methods=["GET"])
+
+@app.route("/cursus_overzicht", methods=["GET", "POST"])
+@login_required
 def cursus_overzicht():
-    # if request.method 
-    cursussen = db.session.query(Cursus.cursus).all()  # Haal alleen de "name" kolom op
-    cursussen = [name[0] for name in cursussen]  # Omdat query.all() een lijst van tuples retourneert
-    return render_template("account/cursus_overzicht.html", cursussen=cursussen)
+    form = RegistrationForm()
+    if request.method == "POST":
+        # Haal de lijst van aangevinkte cursussen op
+        geselecteerde_cursussen = request.form.getlist("cursussen")
+        if geselecteerde_cursussen:
+            for cursus_naam in geselecteerde_cursussen:
+                # Zoek de cursus op in de database
+                cursus = db.session.query(Cursus).filter_by(cursus=cursus_naam).first()
+                if cursus:
+                    # Maak een nieuwe inschrijving aan
+                    nieuwe_inschrijving = Inschrijving(
+                        klant_id=current_user.id,
+                        cursus_id=cursus.id
+                    )
+                    db.session.add(nieuwe_inschrijving)
+                    db.session.commit()
+            flash(f"Je bent succesvol ingeschreven voor de cursussen: {', '.join(geselecteerde_cursussen)}", "success")
+        else:
+            flash("Je hebt geen cursus geselecteerd.", "warning")
+        return redirect(url_for("cursus_overzicht"))
+
+    # Haal alle cursussen op voor weergave
+    cursussen = db.session.query(Cursus.cursus).all()
+    cursussen = [name[0] for name in cursussen]  # Converteer naar een lijst van cursusnamen
+    return render_template("account/cursus_overzicht.html", cursussen=cursussen,form=form)
 
 @app.route("/les_maken", methods=["GET", "POST"])
 @login_required
@@ -35,34 +58,40 @@ def les_maken():
     geselecteerde_tijd = request.form.get("tijdstip")  # Haal de gekozen tijd op
 
     # if request.method 
-    cursussen = db.session.query(Cursus.cursus).all() 
-    cursussen = [name[0] for name in cursussen]  # Omdat query.all() een lijst van tuples retourneert
+    cursus_ids = db.session.query(Cursus.id).all()
+    cursus_ids = [id[0] for id in cursus_ids]
+    cursus_namen = db.session.query(Cursus.cursus).all() 
+    cursus_namen = [name[0] for name in cursus_namen]  # Omdat query.all() een lijst van tuples retourneert
+    cursussen = {naam: id for naam, id in zip(cursus_namen, cursus_ids)}
     # docenten = db.session.query(Docent.id, Docent.gebruikersnaam).all()
     docent_ids = db.session.query(User.id).filter_by(role='docent').all()
     docent_ids = [id[0] for id in docent_ids]  # Converteer de lijst van tuples naar een lijst van IDs
     docent_namen = db.session.query(User.username).filter_by(role='docent').all()
     docent_namen = [naam[0] for naam in docent_namen]
+    docenten = {naam: id for naam, id in zip(docent_namen, docent_ids)}  # {'Piet': 1, 'Henk': 2}
+
     locaties = db.session.query(Locatie.locatie).all()
     locaties = [locatie[0] for locatie in locaties]
     klant_ids = db.session.query(User.id).filter_by(role='klant').all()
     klant_ids = [id[0] for id in klant_ids]
     klant_namen = db.session.query(User.username).filter_by(role='klant').all()
     klant_namen = [naam[0] for naam in klant_namen]
+    klanten = {naam: id for naam, id in zip(klant_namen, klant_ids)}  # {'Jan': 3, 'Kees': 4}
 
     if request.method == "POST":
         les_properties = ["klant", "docent_naam", "cursus", "tijdstip", "locatie"]
         les = [request.form[x] for x in les_properties]
         print(les)
         if les:
-            new_les = Les(id_klant=les[0], id_docent=les[1], id_cursus=les[2], start_tijd=les[3], locatie=les[4])#list comp
+            new_les = Les(id_klant=klanten[les[0]], id_docent=docenten[les[1]], id_cursus=cursussen[les[2]], start_tijd=les[3], locatie=les[4])#list comp
             db.session.add(new_les)
             db.session.commit()
 
             flash(f"Les voor: {les[0]} aangemaakt!")
     # print(docent_namen)
-    return render_template("admin/les_maken.html", cursussen=cursussen, docent_ids=docent_ids, 
-                           docent_namen=docent_namen, locaties=locaties, klant_ids=klant_ids, 
-                           klant_namen=klant_namen, tijdstippen=tijdstippen, 
+    return render_template("admin/les_maken.html", cursussen=cursussen.keys(), 
+                           docent_namen=docenten.keys(), locaties=locaties, 
+                           klant_namen=klanten.keys(), tijdstippen=tijdstippen, 
                            geselecteerde_tijd=geselecteerde_tijd)
     
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
@@ -162,6 +191,7 @@ def register():
         is_docent = request.form.get('is_docent') == 'true'  # Controleer of de checkbox is aangevinkt
         role = 'docent' if is_docent else 'klant'  # Stel de rol in op basis van de keuze
 
+        # Maak een nieuwe gebruiker aan
         user = User(email=form.email.data,
                     username=form.username.data,
                     password=form.password.data,
@@ -169,8 +199,12 @@ def register():
 
         db.session.add(user)
         db.session.commit()
-        flash('Dank voor de registratie. Er kan nu ingelogd worden!')
-        return redirect(url_for('login'))
+
+        # Log de gebruiker direct in
+        login_user(user)
+        flash('Registratie succesvol! Je bent nu ingelogd.', 'success')
+        return redirect(url_for('welkom'))  # Stuur de gebruiker naar een welkomspagina
+
     return render_template('register.html', form=form)
 
 if __name__ == '__main__':

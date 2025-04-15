@@ -6,8 +6,15 @@
     <h2>Cursus Pagina</h2>
     <p>This is your course page</p>
     <ul>
+        <form method="POST">
         {% for cursus in cursussen %}
-            <li>{{ cursus }}</li>
+            <li>{{ cursus }}<!-- Checkbox for selecting role -->
+                <label for="klant_inschrijving">
+                    <input type="checkbox" name="cursussen" value="{{ cursus }}">
+                    Meld je aan voor deze cursus!
+                </label><br></li>
         {% endfor %}
+        {{ form.submit() }}
+        </form>
     </ul>
 {%endblock%}

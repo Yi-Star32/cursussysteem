@@ -17,7 +17,7 @@
     </li>
     {% if current_user.is_authenticated %}
     <li class="nav-link"><a href="{{ url_for('logout') }}">Uitloggen</a></li>
-    {% if current_user.is_authenticated and current_user.role == 'docent' %}
+    {% if current_user.role == 'docent' %}
     <li class="nav-link"><a href="{{ url_for('cursus_toevoegen') }}">Cursus Toevoegen</a></li>
     <li class="nav-link"><a href="{{ url_for('les_maken') }}">Les maken</a></li>
     <li class="nav-link"><a href="{{ url_for('locaties') }}">Locaties</a></li>
@@ -26,7 +26,6 @@
     <li class="nav-link"><a href="{{ url_for('login') }}">Inloggen</a></li>
     <li class="nav-link"><a href="{{ url_for('register') }}">Registreren</a></li>
     {% endif %}
-
 </ul>
 
 <!-- Flash messages -->

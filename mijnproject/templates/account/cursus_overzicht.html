@@ -9,12 +9,17 @@
         <form method="POST">
         {% for cursus in cursussen %}
             <li>{{ cursus }}<!-- Checkbox for selecting role -->
+                {% if current_user.is_authenticated %}
                 <label for="klant_inschrijving">
                     <input type="checkbox" name="cursussen" value="{{ cursus }}">
                     Meld je aan voor deze cursus!
-                </label><br></li>
+                </label>
+                {% endif %}
+                <br></li>
         {% endfor %}
+        {% if current_user.is_authenticated %}
         {{ form.submit() }}
+        {% endif %}
         </form>
     </ul>
 {%endblock%}

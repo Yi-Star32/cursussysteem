@@ -17,7 +17,6 @@ def admin_dashboard():
 
 
 @app.route("/cursus_overzicht", methods=["GET", "POST"])
-@login_required
 def cursus_overzicht():
     form = RegistrationForm()
     if request.method == "POST":

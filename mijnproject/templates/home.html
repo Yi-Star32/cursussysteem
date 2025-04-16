@@ -4,8 +4,18 @@
     {% if current_user.is_authenticated %}
     <p>Hallo {{ current_user.username }}!</p>
     {% else %}
-    <p>Om te kunnen beginnen log in of registreer!</p>
+    <h3 class="welkom-tekst">Welkom op Go Senior!</h3>
     {% endif %}
 </div>
-
+<!-- Container voor de afbeeldingen -->
+<div class="image-container">
+    <img src="{{ url_for('static', filename='images/csharp.png') }}" alt="C# Logo" class="course-image">
+    <img src="{{ url_for('static', filename='images/js.png') }}" alt="JavaScript Logo" class="course-image">
+    <img src="{{ url_for('static', filename='images/python.png') }}" alt="Python Logo" class="course-image">
+</div>
+<div class="image-text">
+<p>Ontdek de wereld van C#! NU!</p>
+<p>Maak prachtige websites met Javascript!</p>
+<p>Automatiseer met Python!</p>
+</div>
 {% endblock %}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="/mijnproject/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -17,20 +17,20 @@
 <ul class="nav">
 
     <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-        <li class="nav-link"><a href="{{ url_for('cursus_overzicht') }}">Cursus Overzicht</a></li>
+        <li class="nav-link {% if request.path == '/' %}active{% endif %}"><a href="{{ url_for('home') }}">Home</a></li>
+        <li class="nav-link {% if request.path == url_for('cursus_overzicht') %}active{% endif %}"><a href="{{ url_for('cursus_overzicht') }}">Cursus Overzicht</a></li>
     </li>
     {% if current_user.is_authenticated %}
     <li class="nav-link"><a href="{{ url_for('logout') }}">Uitloggen</a></li>
-    <li class="nav-link"><a href="{{ url_for('rooster') }}">Rooster</a></li>
+    <li class="nav-link {% if request.path == url_for('rooster') %}active{% endif %}"><a href="{{ url_for('rooster') }}">Rooster</a></li>
     {% if current_user.role == 'docent' %}
-    <li class="nav-link"><a href="{{ url_for('cursus_toevoegen') }}">Cursus Toevoegen</a></li>
-    <li class="nav-link"><a href="{{ url_for('les_maken') }}">Les maken</a></li>
-    <li class="nav-link"><a href="{{ url_for('locaties') }}">Locaties</a></li>
+    <li class="nav-link {% if request.path == url_for('cursus_toevoegen') %}active{% endif %}"><a href="{{ url_for('cursus_toevoegen') }}">Cursus Toevoegen</a></li>
+    <li class="nav-link {% if request.path == url_for('les_maken') %}active{% endif %}"><a href="{{ url_for('les_maken') }}">Les maken</a></li>
+    <li class="nav-link {% if request.path == url_for('locaties') %}active{% endif %}"><a href="{{ url_for('locaties') }}">Locaties</a></li>
     {% endif %}
     {% else %}
-    <li class="nav-link"><a href="{{ url_for('login') }}">Inloggen</a></li>
-    <li class="nav-link"><a href="{{ url_for('register') }}">Registreren</a></li>
+    <li class="nav-link {% if request.path == url_for('login') %}active{% endif %}"><a href="{{ url_for('login') }}">Inloggen</a></li>
+    <li class="nav-link {% if request.path == url_for('register') %}active{% endif %}"><a href="{{ url_for('register') }}">Registreren</a></li>
     {% endif %}
 </ul>
 
@@ -47,7 +47,7 @@
         {% endif %}
     {% endwith %}
 </div>
-
+<div class="container">
 {% block content %}
 
 {% endblock %}

@@ -7,17 +7,17 @@ from mijnproject.models import User
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Log In')
+    password = PasswordField('Wachtwoord', validators=[DataRequired()])
+    submit = SubmitField('Inloggen')
 
 
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password',
-                             validators=[DataRequired(), EqualTo('pass_confirm', message='Passwords Must Match!')])
-    pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
-    submit = SubmitField('Registreer!')
+    username = StringField('Gebruikersnaam', validators=[DataRequired()])
+    password = PasswordField('Wachtwoord',
+                             validators=[DataRequired(), EqualTo('pass_confirm', message='Wachtwoord moet overeen komen!')])
+    pass_confirm = PasswordField('Bevestig Wachtwoord', validators=[DataRequired()])
+    submit = SubmitField('Registreer')
 
     def check_email(self, field):
         # Check of het e-mailadres al in de database voorkomt!

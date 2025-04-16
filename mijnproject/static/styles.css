@@ -1,9 +1,197 @@
+/* Algemene instellingen */
 body {
-    margin: 20px;
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
 }
 
+.jumbotron {
+    background-image: url('./images/oldman_programming.png'); 
+    background-size: cover;
+    background-position: center -100px; /* Schuif de afbeelding naar boven */
+}
+
+/* Container voor de afbeeldingen */
+.image-container {
+    display: flex;
+    justify-content: center; /* Centreer de afbeeldingen horizontaal */
+    gap: 200px; /* Voeg ruimte toe tussen de afbeeldingen */
+    margin-top: 20px; /* Voeg wat ruimte toe boven de container */
+}
+
+/* Stijl voor de afbeeldingen */
+.course-image {
+    width: 150px; /* Stel de breedte van de afbeeldingen in */
+    height: auto; /* Zorg ervoor dat de hoogte automatisch wordt aangepast */
+    border-radius: 8px; /* Optioneel: Maak de hoeken afgerond */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optioneel: Voeg een schaduw toe */
+}
+
+.image-text{
+    font-weight: bold;
+    display: flex;
+    justify-content: center; /* Centreer de afbeeldingen horizontaal */
+    gap: 80px; /* Voeg ruimte toe tussen de afbeeldingen */
+    margin-top: 20px; /* Voeg wat ruimte toe boven de container */
+}
+
+
+
+/* Navigatiebalk */
+ul.nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #020e7b;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+ul.nav li {
+    margin: 0;
+    padding: 0;
+    
+}
+
+
+
+/* Navigatiebalk */
+ul.nav .nav-link {
+    color: #fff !important; /* Zorg ervoor dat alle navigatieteksten wit zijn */
+    text-decoration: none;
+    font-weight: bold;
+    padding: 15px 20px;
+    display: block;
+    transition: background-color 0.3s ease;
+}
+
+ul.nav .nav-link:hover {
+    background-color: #0368d4; /* Optioneel: verander de achtergrondkleur bij hover */
+    color: #fff; /* Zorg ervoor dat de tekst wit blijft bij hover */
+}
+
+ul.nav .nav-link.active {
+    background-color: #0056b3; /* Donkerblauwe achtergrond voor actieve link */
+    color: #fff; /* Witte tekstkleur voor actieve link */
+    font-weight: bold;
+}
+
+nav .nav-item .nav-link {
+    color: white;
+}
+
+.nav-link a {
+    color: white !important;
+}
+
+.welkom-tekst{
+    color: #dcdada; /* Tekstkleur wit */
+    background-color: #0368d4; /* Achtergrondkleur */
+    display: inline; /* Zorgt ervoor dat de achtergrondkleur alleen de tekst omhult */
+    padding: 5px 10px; /* Optioneel: Voeg wat ruimte rond de tekst toe */
+    border-radius: 4px; /* Optioneel: Maak de randen afgerond */
+}
+
+/* Container */
+.container {
+    max-width: 100px;
+    margin: 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-left: 5px; /* Verplaatst de UI 50px naar rechts */
+}
+
+/* Koppen */
+h1, h2, h3 {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+/* Formulieren */
+form {
+    margin-top: 20px;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+form button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Lijsten */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}
+
+/* Flash messages */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Kalender */
 #calendar {
     max-width: 1100px;
-    margin: 0 auto;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #007bff;
+    color: #fff;
+    margin-top: 20px;
+    font-size: 14px;
 }

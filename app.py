@@ -177,8 +177,11 @@ def login():
             # the welcome page.
             if next == None or not next[0] == '/':
                 next = url_for('welkom')
+        
 
             return redirect(next)
+        else:
+            flash("Wrong credentials!")
     return render_template('login.html', form=form)
 
 

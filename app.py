@@ -44,18 +44,28 @@ def cursus_overzicht():
     cursussen = [name[0] for name in cursussen]  # Converteer naar een lijst van cursusnamen
     return render_template("account/cursus_overzicht.html", cursussen=cursussen,form=form)
 
+@app.route('/process_datetime', methods=['POST'])
+def process_datetime():
+    datetime_value = request.form.get('datetime')
+    # Verwerk de datum en tijd data
+    # bijv. opslaan in database, etc.
+    
+    # Voor debug: print de waarde
+    print(f"Ontvangen datum/tijd: {datetime_value}")
+    
+    # Terug naar homepage of redirect naar een bevestigingspagina
+    return redirect(url_for('index'))
+
+
 @app.route("/les_maken", methods=["GET", "POST"])
 @login_required
 def les_maken():
     if current_user.role != 'docent':
         flash('Toegang geweigerd: alleen docenten hebben toegang.')
         return redirect(url_for('home'))
-    tijdstippen = [f"{h:02d}:00" for h in range(8, 18)]  # Lijst met tijden van 08:00 tot 17:00
 
     geselecteerde_tijd = None
     
-    geselecteerde_tijd = request.form.get("tijdstip")  # Haal de gekozen tijd op
-
     # if request.method 
     cursus_ids = db.session.query(Cursus.id).all()
     cursus_ids = [id[0] for id in cursus_ids]
@@ -78,7 +88,7 @@ def les_maken():
     klanten = {naam: id for naam, id in zip(klant_namen, klant_ids)}  # {'Jan': 3, 'Kees': 4}
 
     if request.method == "POST":
-        les_properties = ["klant", "docent_naam", "cursus", "tijdstip", "locatie"]
+        les_properties = ["klant", "docent_naam", "cursus", "datetime", "locatie"]
         les = [request.form[x] for x in les_properties]
         print(les)
         if les:
@@ -90,7 +100,7 @@ def les_maken():
     # print(docent_namen)
     return render_template("admin/les_maken.html", cursussen=cursussen.keys(), 
                            docent_namen=docenten.keys(), locaties=locaties, 
-                           klant_namen=klanten.keys(), tijdstippen=tijdstippen, 
+                           klant_namen=klanten.keys(), 
                            geselecteerde_tijd=geselecteerde_tijd)
     
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])

@@ -5,6 +5,7 @@
 {%block content%}
     <h2>Les Pagina</h2>
     <p>This is your lesson page</p>
+    
     <form method="post">
         <select name="cursus" required>
             <option value="" disabled selected>Selecteer een cursus...</option> 
@@ -24,12 +25,7 @@
                 <option value="{{ locatie }}">{{ locatie }}</option>
             {% endfor %}
         </select>
-        <select name="tijdstip" required>
-            <option value="" disabled selected>Selecteer een tijdstip...</option> 
-            {% for tijd in tijdstippen %}
-                <option value="{{ tijd }}">{{ tijd }}</option>
-            {% endfor %}
-        </select>
+        <input type="text" id="datetime-picker" name="datetime" placeholder="Selecteer datum en tijd" value="{{ geselecteerde_tijd }}">
         <select name="klant" required>
             <option value="" disabled selected>Selecteer een klant...</option> 
             {% for klant_naam in klant_namen %}
@@ -38,5 +34,19 @@
         </select>
         <button type="submit">Verzenden</button>
     </form>
+
+
+
+    <!-- Flatpickr JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#datetime-picker", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            time_24hr: true,
+            locale: "nl",
+            minuteIncrement: 15
+        });
+    </script>
     
 {%endblock%}

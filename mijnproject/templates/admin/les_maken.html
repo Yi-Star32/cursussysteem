@@ -26,10 +26,9 @@
             {% endfor %}
         </select>
         <input type="text" id="datetime-picker" name="datetime" placeholder="Selecteer datum en tijd" value="{{ geselecteerde_tijd }}">
-        <select name="klant" required>
-            <option value="" disabled selected>Selecteer een klant...</option> 
+        <select name="klanten" multiple required>
             {% for klant_naam in klant_namen %}
-                <option value="{{ klant_naam }}">{{ klant_naam }}</option>
+            <option value="{{ klant_naam }}">{{ klant_naam }}</option>
             {% endfor %}
         </select>
         <button type="submit">Verzenden</button>

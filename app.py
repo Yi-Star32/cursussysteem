@@ -110,18 +110,17 @@ def les_maken():
 
     geselecteerde_tijd = None
     
-    # if request.method 
     cursus_ids = db.session.query(Cursus.id).all()
     cursus_ids = [id[0] for id in cursus_ids]
     cursus_namen = db.session.query(Cursus.cursus).all() 
-    cursus_namen = [name[0] for name in cursus_namen]  # Omdat query.all() een lijst van tuples retourneert
+    cursus_namen = [name[0] for name in cursus_namen]
     cursussen = {naam: id for naam, id in zip(cursus_namen, cursus_ids)}
-    # docenten = db.session.query(Docent.id, Docent.gebruikersnaam).all()
+    
     docent_ids = db.session.query(User.id).filter_by(role='docent').all()
-    docent_ids = [id[0] for id in docent_ids]  # Converteer de lijst van tuples naar een lijst van IDs
+    docent_ids = [id[0] for id in docent_ids]
     docent_namen = db.session.query(User.username).filter_by(role='docent').all()
     docent_namen = [naam[0] for naam in docent_namen]
-    docenten = {naam: id for naam, id in zip(docent_namen, docent_ids)}  # {'Piet': 1, 'Henk': 2}
+    docenten = {naam: id for naam, id in zip(docent_namen, docent_ids)}
 
     locaties = db.session.query(Locatie.locatie).all()
     locaties = [locatie[0] for locatie in locaties]
@@ -129,24 +128,55 @@ def les_maken():
     klant_ids = [id[0] for id in klant_ids]
     klant_namen = db.session.query(User.username).filter_by(role='klant').all()
     klant_namen = [naam[0] for naam in klant_namen]
-    klanten = {naam: id for naam, id in zip(klant_namen, klant_ids)}  # {'Jan': 3, 'Kees': 4}
+    klanten = {naam: id for naam, id in zip(klant_namen, klant_ids)}
 
     if request.method == "POST":
-        les_properties = ["klant", "docent_naam", "cursus", "datetime", "locatie"]
-        les = [request.form[x] for x in les_properties]
-        les[3] = datetime.strptime(les[3], '%Y-%m-%d %H:%M')
-        print(les[3])
-        if les:
-            new_les = Les(id_klant=klanten[les[0]], id_docent=docenten[les[1]], id_cursus=cursussen[les[2]], datetime=les[3], locatie=les[4])#list comp
-            db.session.add(new_les)
+        try:
+            # Controleer of klanten een lijst is (getlist voor meerdere selecties)
+            klant_selectie = request.form.getlist('klanten')
+            if not klant_selectie:  # Als getlist niet werkt, probeer een enkele waarde
+                klant_selectie = [request.form['klanten']]
+                
+            # Debug output
+            print(f"Geselecteerde klanten: {klant_selectie}")
+            
+            docent_naam = request.form['docent_naam']
+            cursus = request.form['cursus']
+            datum_tijd = request.form['datetime']
+            locatie = request.form['locatie']
+            
+            # Converteer de datum-tijd string naar een datetime object
+            datum_tijd_obj = datetime.strptime(datum_tijd, '%Y-%m-%d %H:%M')
+            
+            # Voeg les toe voor elke geselecteerde klant
+            for klant_naam in klant_selectie:
+                # Controleer of klant bestaat
+                if klant_naam in klanten:
+                    klant_id = klanten[klant_naam]
+                    new_les = Les(
+                        id_klant=klant_id, 
+                        id_docent=docenten[docent_naam], 
+                        id_cursus=cursussen[cursus], 
+                        datetime=datum_tijd_obj, 
+                        locatie=locatie
+                    )
+                    db.session.add(new_les)
+                else:
+                    flash(f"Waarschuwing: Klant '{klant_naam}' niet gevonden")
+            
             db.session.commit()
-
-            flash(f"Les voor: {les[0]} aangemaakt!")
-    # print(docent_namen)
-    return render_template("admin/les_maken.html", cursussen=cursussen.keys(), 
-                           docent_namen=docenten.keys(), locaties=locaties, 
-                           klant_namen=klanten.keys(), 
-                           geselecteerde_tijd=geselecteerde_tijd)
+            flash(f"Les voor: {', '.join(klant_selectie)} aangemaakt!")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Fout bij het aanmaken van de les: {str(e)}")
+            print(f"Fout: {str(e)}")
+    
+    return render_template("admin/les_maken.html", 
+                          cursussen=cursussen.keys(), 
+                          docent_namen=docenten.keys(), 
+                          locaties=locaties, 
+                          klant_namen=klanten.keys(), 
+                          geselecteerde_tijd=geselecteerde_tijd)
     
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
 @login_required

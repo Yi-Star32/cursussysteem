@@ -1,6 +1,7 @@
 from mijnproject import db, login_manager, app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from datetime import datetime
 
 
 # De user_loader decorator zorgt voor de flask-login voor de huidige gebruiker
@@ -64,11 +65,11 @@ class Les(db.Model):
     id_klant = db.Column(db.Integer, nullable=False) 
     id_docent = db.Column(db.Integer, nullable=False) 
     id_cursus = db.Column(db.Integer, nullable=False) 
-    start_tijd = db.Column(db.String(12), nullable=False)
+    datetime = db.Column(db.DateTime, nullable=False)
     locatie = db.Column(db.String(50), nullable=False)  
 
     def __repr__(self):
-        return f"<Les {self.id} - {self.cursus} - {self.start_tijd}>"
+        return f"<Les {self.id} - {self.cursus} - {self.datetime}>"
 
 with app.app_context():
     db.create_all()

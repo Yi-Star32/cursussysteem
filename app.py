@@ -1,11 +1,11 @@
 from mijnproject import app, db
 from mijnproject.models import Cursus, Les, Locatie, User, Inschrijving
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, jsonify
 from flask_login import login_user, login_required, logout_user, current_user
 from mijnproject.models import User
 from mijnproject.forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime
 
 @app.route('/admin')
 @login_required
@@ -43,6 +43,50 @@ def cursus_overzicht():
     cursussen = db.session.query(Cursus.cursus).all()
     cursussen = [name[0] for name in cursussen]  # Converteer naar een lijst van cursusnamen
     return render_template("account/cursus_overzicht.html", cursussen=cursussen,form=form)
+
+
+@app.route('/rooster')
+def rooster():
+    return render_template('account/rooster.html')
+
+
+@app.route('/api/lessen', methods=["GET", "POST"])
+def get_lessen():
+    try:
+        if current_user.role == 'docent':
+            # Haal lessen op waar de huidige gebruiker de docent is
+            lessen = Les.query.filter_by(id_docent=current_user.id).all()
+        elif current_user.role == 'klant':
+            # Haal lessen op waar de huidige gebruiker de klant is
+            lessen = Les.query.filter_by(id_klant=current_user.id).all()
+        else:
+            flash('Onbekende rol. Kan geen lessen ophalen.', 'danger')
+            # return redirect(url_for('home'))
+        events = []
+
+        for les in lessen:        
+            docent = User.query.get(les.id_docent)
+            cursus = Cursus.query.get(les.id_cursus)
+            # Voeg toe aan events-lijst in FullCalendar-formaat
+            events.append({
+                'id': les.id,
+                'title': f"{cursus.cursus} - {docent.username}",
+                'start': les.datetime.isoformat(),
+                'end': (les.datetime.replace(hour=les.datetime.hour+1)).isoformat(),
+                'extendedProps': {
+                    'locatie': les.locatie,
+                    'docent_id': les.id_docent,
+                    'cursus_id': les.id_cursus
+                }
+            })
+            return jsonify(events)
+    except TypeError as e:
+        # Log de fout
+        print(f"TypeError bij ophalen lessen: {e}")
+        # Retourneer een lege lijst of dummy data
+        lessen = []
+
+    # return render_template("account/rooster.html")
 
 @app.route('/process_datetime', methods=['POST'])
 def process_datetime():
@@ -90,9 +134,10 @@ def les_maken():
     if request.method == "POST":
         les_properties = ["klant", "docent_naam", "cursus", "datetime", "locatie"]
         les = [request.form[x] for x in les_properties]
-        print(les)
+        les[3] = datetime.strptime(les[3], '%Y-%m-%d %H:%M')
+        print(les[3])
         if les:
-            new_les = Les(id_klant=klanten[les[0]], id_docent=docenten[les[1]], id_cursus=cursussen[les[2]], start_tijd=les[3], locatie=les[4])#list comp
+            new_les = Les(id_klant=klanten[les[0]], id_docent=docenten[les[1]], id_cursus=cursussen[les[2]], datetime=les[3], locatie=les[4])#list comp
             db.session.add(new_les)
             db.session.commit()
 

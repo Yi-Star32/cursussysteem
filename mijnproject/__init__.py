@@ -9,6 +9,9 @@ login_manager = LoginManager()
 
 app = Flask(__name__)
 
+# Voeg zip toe aan de Jinja2-omgeving
+app.jinja_env.globals.update(zip=zip)
+
 # Vaak worden deze coderegels in een apart config.py-bestand ondergebracht
 app.config['SECRET_KEY'] = 'mijngeheimesleutel'
 basedir = os.path.abspath(os.path.dirname(__file__))

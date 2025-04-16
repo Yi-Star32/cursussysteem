@@ -34,6 +34,7 @@ class Cursus(db.Model):
     __tablename__ = 'cursus'
     id = db.Column(db.Integer, primary_key=True)  # Eerste kolom: Auto-increment ID
     cursus = db.Column(db.String(20), nullable=False)
+    korting = db.Column(db.String(20), nullable=False)
 
 
     def __repr__(self):

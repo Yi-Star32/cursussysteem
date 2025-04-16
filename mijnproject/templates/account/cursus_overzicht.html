@@ -7,17 +7,18 @@
     <p>This is your course page</p>
     <ul>
         <form method="POST">
-        {% for cursus in cursussen %}
-            <li>{{ cursus }}<!-- Checkbox for selecting role -->
-                {% if current_user.is_authenticated %}
+            {% for cursus, korting in zip(cursussen, kortingen) %}
+            <li>{{ cursus }}
+                {% if current_user.role == 'klant' %}
                 <label for="klant_inschrijving">
-                    <input type="checkbox" name="cursussen" value="{{ cursus }}">
+                    <input type="checkbox" name="cursussen" value="{{ cursus }}" ><p2>       {{ korting }} korting! </p2>
                     Meld je aan voor deze cursus!
                 </label>
                 {% endif %}
-                <br></li>
+                <br>
+            </li>
         {% endfor %}
-        {% if current_user.is_authenticated %}
+        {% if current_user.role == 'klant' %}
         {{ form.submit() }}
         {% endif %}
         </form>

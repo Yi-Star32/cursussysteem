@@ -19,6 +19,7 @@ def admin_dashboard():
 @app.route("/cursus_overzicht", methods=["GET", "POST"])
 def cursus_overzicht():
     form = RegistrationForm()
+    
     if request.method == "POST":
         # Haal de lijst van aangevinkte cursussen op
         geselecteerde_cursussen = request.form.getlist("cursussen")
@@ -41,8 +42,10 @@ def cursus_overzicht():
 
     # Haal alle cursussen op voor weergave
     cursussen = db.session.query(Cursus.cursus).all()
+    kortingen = db.session.query(Cursus.korting).all()
     cursussen = [name[0] for name in cursussen]  # Converteer naar een lijst van cursusnamen
-    return render_template("account/cursus_overzicht.html", cursussen=cursussen,form=form)
+    kortingen = [name[0] for name in kortingen]
+    return render_template("account/cursus_overzicht.html", cursussen=cursussen,form=form, kortingen=kortingen)
 
 
 @app.route('/rooster')
@@ -181,18 +184,21 @@ def les_maken():
 @app.route("/cursus_toevoegen", methods=["GET", "POST"])
 @login_required
 def cursus_toevoegen():
+    kortingen = ["Geen Korting", "5%", "10%", "15%", "20%", "50%", "100%"]
     if current_user.role != 'docent':
         flash('Toegang geweigerd: alleen docenten hebben toegang.')
         return redirect(url_for('home'))
     if request.method == "POST":
         cursusnaam = request.form["cursusnaam"]
+        korting=request.form["korting"]
         if cursusnaam:
-            new_cursus = Cursus(cursus=cursusnaam)
+            new_cursus = Cursus(cursus=cursusnaam, korting=korting)
             db.session.add(new_cursus)
             db.session.commit()
         flash(f"Cursus toegevoegd: {cursusnaam}!")
         return redirect(url_for('home'))        
-    return render_template("admin/cursus_toevoegen.html")
+    return render_template("admin/cursus_toevoegen.html",
+                           kortingen=kortingen)
 
 
 @app.route("/locaties", methods=["GET", "POST"])

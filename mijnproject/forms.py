@@ -27,4 +27,4 @@ class RegistrationForm(FlaskForm):
     def check_username(self, field):
         # Check of de gebruikersnaam nog niet vergeven is!
         if User.query.filter_by(username=field.data).first():
-            raise ValidationError('Deze gebruikersnaam is al vergeven, kies een andere naam!')
+            raise ValidationError('Deze gebruikersnaam bestaat al, kies een andere naam!')

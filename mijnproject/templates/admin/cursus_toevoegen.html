@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Home{%endblock%}
+{% block title %}Cursus Toevoegen{%endblock%}
 
 {%block content%}
     <h2>Cursus Toevoegen</h2>
-    <p>This is your course_page</p>
+    <p>Voeg een cursus toe!</p>
     <form method="post">
-        <input type="text" name="cursusnaam" placeholder="Enter Course">
+        <input type="text" name="cursusnaam" placeholder="cursusnaam">
         <select name="korting" required>
             {% for korting in kortingen %}
             <option value="{{ korting }}">{{ korting }}</option>
             {% endfor %}
         </select>
-        <button type="submit">Submit</button>
+        <button type="submit">Toevoegen</button>
     </form>
 {%endblock%}

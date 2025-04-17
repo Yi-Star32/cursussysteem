@@ -9,7 +9,7 @@ body {
 .jumbotron {
     background-image: url('./images/oldman_programming.png'); 
     background-size: cover;
-    background-position: center -100px; /* Schuif de afbeelding naar boven */
+    background-position: center -120px; /* Schuif de afbeelding naar boven */
 }
 
 /* Container voor de afbeeldingen */
@@ -87,7 +87,7 @@ nav .nav-item .nav-link {
 }
 
 .welkom-tekst{
-    color: #dcdada; /* Tekstkleur wit */
+    color: #ffffff; /* Tekstkleur wit */
     background-color: #0368d4; /* Achtergrondkleur */
     display: inline; /* Zorgt ervoor dat de achtergrondkleur alleen de tekst omhult */
     padding: 5px 10px; /* Optioneel: Voeg wat ruimte rond de tekst toe */

@@ -11,7 +11,7 @@ from datetime import datetime
 @login_required
 def admin_dashboard():
     if current_user.role != 'docent':
-        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        flash('Toegang geweigerd: alleen docenten hebben toegang.', 'warning')
         return redirect(url_for('home'))
     return render_template('admin/dashboard.html')
 
@@ -108,7 +108,7 @@ def process_datetime():
 @login_required
 def les_maken():
     if current_user.role != 'docent':
-        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        flash('Toegang geweigerd: alleen docenten hebben toegang.', 'warning')
         return redirect(url_for('home'))
 
     geselecteerde_tijd = None
@@ -165,13 +165,13 @@ def les_maken():
                     )
                     db.session.add(new_les)
                 else:
-                    flash(f"Waarschuwing: Klant '{klant_naam}' niet gevonden")
+                    flash(f"Waarschuwing: Klant '{klant_naam}' niet gevonden", 'warning')
             
             db.session.commit()
-            flash(f"Les voor: {', '.join(klant_selectie)} aangemaakt!")
+            flash(f"Les voor: {', '.join(klant_selectie)} aangemaakt!", 'success')
         except Exception as e:
             db.session.rollback()
-            flash(f"Fout bij het aanmaken van de les: {str(e)}")
+            flash(f"Fout bij het aanmaken van de les: {str(e)}", 'danger')
             print(f"Fout: {str(e)}")
     
     return render_template("admin/les_maken.html", 
@@ -186,7 +186,7 @@ def les_maken():
 def cursus_toevoegen():
     kortingen = ["Geen Korting", "5%", "10%", "15%", "20%", "50%", "100%"]
     if current_user.role != 'docent':
-        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        flash('Toegang geweigerd: alleen docenten hebben toegang.', 'warning')
         return redirect(url_for('home'))
     if request.method == "POST":
         cursusnaam = request.form["cursusnaam"]
@@ -195,7 +195,7 @@ def cursus_toevoegen():
             new_cursus = Cursus(cursus=cursusnaam, korting=korting)
             db.session.add(new_cursus)
             db.session.commit()
-        flash(f"Cursus toegevoegd: {cursusnaam}!")
+        flash(f"Cursus toegevoegd: {cursusnaam}!", 'success')
         return redirect(url_for('home'))        
     return render_template("admin/cursus_toevoegen.html",
                            kortingen=kortingen)
@@ -205,7 +205,7 @@ def cursus_toevoegen():
 @login_required
 def locaties():
     if current_user.role != 'docent':
-        flash('Toegang geweigerd: alleen docenten hebben toegang.')
+        flash('Toegang geweigerd: alleen docenten hebben toegang.', 'warning')
         return redirect(url_for('home'))
     if request.method == "POST":
         locatie = request.form["locatie"]
@@ -213,14 +213,10 @@ def locaties():
             new_locatie = Locatie(locatie=locatie)
             db.session.add(new_locatie)
             db.session.commit()
-        flash(f"Locatie toegevoegd: {locatie}!")
+        flash(f"Locatie toegevoegd: {locatie}!", 'success')
         return redirect(url_for('home'))
     return render_template("admin/locaties.html")
 
-
-@app.route("/about")
-def about():
-    return "This is the about page!"
 
 
 
@@ -239,7 +235,7 @@ def welkom():
 @login_required
 def logout():
     logout_user()
-    flash('Je bent nu uitgelogd!')
+    flash('Je bent nu uitgelogd!', 'success')
     return redirect(url_for('home'))
 
 
@@ -258,7 +254,7 @@ def login():
             # Log in the user
 
             login_user(user)
-            flash('Logged in successfully.')
+            flash('Inloggen is gelukt!', 'success')
 
             # If a user was trying to visit a page that requires a login
             # flask saves that URL as 'next'.
@@ -267,12 +263,12 @@ def login():
             # So let's now check if that next exists, otherwise we'll go to
             # the welcome page.
             if next == None or not next[0] == '/':
-                next = url_for('welkom')
+                next = url_for('home')
         
 
             return redirect(next)
         else:
-            flash("Wrong credentials!")
+            flash("Foute gegevens!", 'warning')
     return render_template('login.html', form=form)
 
 
@@ -296,7 +292,7 @@ def register():
         # Log de gebruiker direct in
         login_user(user)
         flash('Registratie succesvol! Je bent nu ingelogd.', 'success')
-        return redirect(url_for('welkom'))  # Stuur de gebruiker naar een welkomspagina
+        return redirect(url_for('home'))  # Stuur de gebruiker naar een home
 
     return render_template('register.html', form=form)
 

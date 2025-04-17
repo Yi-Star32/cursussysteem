@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% block title %}Home{%endblock%}
 {% block content %}
 <div class="jumbotron">
     {% if current_user.is_authenticated %}
-    <p>Hallo {{ current_user.username }}!</p>
+    <h3 class="welkom-tekst">Hallo {{ current_user.username }}!</h3>
     {% else %}
     <h3 class="welkom-tekst">Welkom op Go Senior!</h3>
     {% endif %}

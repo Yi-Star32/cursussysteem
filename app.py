@@ -111,7 +111,7 @@ def les_maken():
         flash('Toegang geweigerd: alleen docenten hebben toegang.', 'warning')
         return redirect(url_for('home'))
 
-    geselecteerde_tijd = None
+    geselecteerde_tijd = 'Selecteer een datum en tijdstip'
     
     cursus_ids = db.session.query(Cursus.id).all()
     cursus_ids = [id[0] for id in cursus_ids]
